@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Glasses Case Viewer</title>
+    <script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
+    <script src="https://webglfundamentals.org/webgl/resources/m4.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .viewer-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .canvas-container {
+            position: relative;
+            height: 70vh;
+            background: #f8f9fa;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        .info-section {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #636e72;
+            font-weight: 400;
+        }
+
+        .instructions {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #2d3436;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="viewer-section">
+            <div class="canvas-container">
+                <div class="controls">
+                    <button class="btn" id="autoRotateBtn">Auto Rotate</button>
+                    <button class="btn" id="resetBtn">Reset View</button>
+                </div>
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+        <div class="info-section">
+            <h1 class="title">Fanza Khairan Pratama</h1>
+            <p class="subtitle">Grafika Komputer (D) - WebGL Object</p>
+            <div class="instructions">
+                Mouse Controls:<br>
+                • Click and drag to rotate manually<br>
+                • Scroll to zoom in/out
+            </div>
+        </div>
+    </div>
+    <script type="module" src="./js/main.js"></script>
+    <script>
+        // Initialize drag rotation functionality
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        const canvas = document.getElementById('canvas');
+        
+        // Expose rotation control to main.js
+        window.rotationControl = {
+            deltaRotationX: 0,
+            deltaRotationY: 0,
+            isAutoRotating: true,
+            scale: 1
+        };
+
+        // Mouse controls
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMousePosition = {
+                x: e.clientX,
+                y: e.clientY
+            };
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaMove = {
+                x: e.clientX - previousMousePosition.x,
+                y: e.clientY - previousMousePosition.y
+            };
+
+            window.rotationControl.deltaRotationX += deltaMove.y * 0.005;
+            window.rotationControl.deltaRotationY += deltaMove.x * 0.005;
+
+            previousMousePosition = {
+                x: e.clientX,
+                y: e.clientY
+            };
+        });
+
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+
+        // Zoom control
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            window.rotationControl.scale += e.deltaY * -0.001;
+            // Constrain scale
+            window.rotationControl.scale = Math.min(Math.max(0.5, window.rotationControl.scale), 4);
+        });
+
+        // Auto rotation toggle
+        const autoRotateBtn = document.getElementById('autoRotateBtn');
+        autoRotateBtn.addEventListener('click', () => {
+            window.rotationControl.isAutoRotating = !window.rotationControl.isAutoRotating;
+            autoRotateBtn.textContent = window.rotationControl.isAutoRotating ? 'Stop Rotation' : 'Auto Rotate';
+        });
+
+        // Reset view
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            window.rotationControl.deltaRotationX = 0;
+            window.rotationControl.deltaRotationY = 0;
+            window.rotationControl.scale = 1;
+        });
+    </script>
+</body>
+</html>
