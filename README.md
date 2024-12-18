@@ -57,6 +57,7 @@ project/
 
 ## Screenshots
 
+![Screenshot 2024-12-18 113838](https://github.com/user-attachments/assets/ebf8504c-5a2b-4183-b2d5-957888c9cc22)
 
 ## GitHub IO
 
