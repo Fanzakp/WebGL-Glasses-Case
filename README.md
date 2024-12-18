@@ -1,4 +1,4 @@
-# 3D Glasses Case Viewer
+# 3D Glasses Case with WEBGL
 
 | Nama          | NRP        |
 |---------------|-----------|
